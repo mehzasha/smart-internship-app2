@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartIntern — Find the internship that's right for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<style>
+:root{
+  --bg: #F6F5FC;
+  --bg-alt: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-2: #F0EEFB;
+  --border: #E4E1F5;
+  --text: #211D3B;
+  --text-soft: #605C7E;
+  --text-faint: #918DB0;
+  --indigo: #4F3FE0;
+  --indigo-dark: #3B2EB8;
+  --violet: #8B5CF6;
+  --blue: #2F6FED;
+  --green: #1C9A6C;
+  --amber: #C6790A;
+  --red: #D6446A;
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --shadow: 0 1px 2px rgba(33,29,59,0.04), 0 8px 24px rgba(33,29,59,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg: #16142A;
+    --bg-alt: #1D1B36;
+    --surface: #211F3E;
+    --surface-2: #292650;
+    --border: #37325F;
+    --text: #F1EFFB;
+    --text-soft: #B8B4DA;
+    --text-faint: #837EB0;
+    --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg: #16142A;
+  --bg-alt: #1D1B36;
+  --surface: #211F3E;
+  --surface-2: #292650;
+  --border: #37325F;
+  --text: #F1EFFB;
+  --text-soft: #B8B4DA;
+  --text-faint: #837EB0;
+  --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);}
+body{
+  font-family: var(--font-body);
+  color: var(--text);
+  min-height:100vh;
+}
+#root{min-height:100vh;}
+h1,h2,h3,h4,.display{font-family:var(--font-display); letter-spacing:-0.01em;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+.container{max-width:1180px;margin:0 auto;padding:0 24px;}
+.wide-scroll{overflow-x:auto;}
+::selection{background:var(--indigo); color:white;}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 22px; border-radius:11px; font-weight:600; font-size:15px;
+  border:1px solid transparent; transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--indigo); color:#fff;}
+.btn-primary:hover{background:var(--indigo-dark);}
+.btn-outline{background:transparent; border-color:var(--border); color:var(--text);}
+.btn-outline:hover{border-color:var(--indigo); color:var(--indigo);}
+.btn-ghost{background:transparent; color:var(--text-soft); padding:10px 14px;}
+.btn-ghost:hover{color:var(--text);}
+.btn-sm{padding:8px 14px; font-size:13px; border-radius:9px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.5; cursor:not-allowed;}
+
+/* Card */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:16px;
+  box-shadow: var(--shadow);
+}
+.card-pad{padding:22px;}
+
+/* Inputs */
+.field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+.field label{font-size:13px; font-weight:600; color:var(--text-soft);}
+.field input, .field select, .field textarea{
+  border:1.5px solid var(--border); border-radius:10px; padding:11px 13px; font-size:14.5px;
+  background:var(--bg-alt); color:var(--text); font-family:inherit; outline:none;
+  transition:border-color .12s ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--indigo);}
+.field .hint{font-size:12px; color:var(--text-faint);}
+.field .error{font-size:12.5px; color:var(--red); font-weight:500;}
+
+.chip-select{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{
+  padding:7px 13px; border-radius:999px; border:1.5px solid var(--border); font-size:13.5px;
+  background:var(--bg-alt); color:var(--text-soft); font-weight:500; transition:all .12s ease;
+}
+.chip.active{background:var(--indigo); border-color:var(--indigo); color:#fff;}
+
+/* Badge */
+.badge{display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:7px; font-size:12.5px; font-weight:600;}
+.badge-skill{background:var(--surface-2); color:var(--indigo);}
+.badge-missing{background:rgba(214,68,106,0.1); color:var(--red);}
+.badge-domain{background:rgba(47,111,237,0.1); color:var(--blue);}
+
+/* Navbar */
+.navbar{
+  position:sticky; top:0; z-index:40; background:rgba(246,245,252,0.86); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+:root[data-theme="dark"] .navbar, :root:not([data-theme="light"]) .navbar{background:rgba(22,20,42,0.86);}
+@media (prefers-color-scheme: dark){ .navbar{background:rgba(22,20,42,0.86);} }
+.navbar-inner{display:flex; align-items:center; justify-content:space-between; height:66px;}
+.logo{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:700; font-size:19px;}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--indigo),var(--violet)); display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;}
+.nav-links{display:flex; align-items:center; gap:2px;}
+.nav-link{padding:9px 14px; border-radius:9px; font-size:14.5px; font-weight:600; color:var(--text-soft); border:none; background:transparent;}
+.nav-link.active{color:var(--indigo); background:var(--surface-2);}
+.nav-link:hover{color:var(--indigo);}
+
+/* Progress bar */
+.progress-track{width:100%; height:9px; border-radius:99px; background:var(--surface-2); overflow:hidden;}
+.progress-fill{height:100%; border-radius:99px; transition:width .5s ease;}
+
+/* Match ring */
+.match-ring{position:relative; display:flex; align-items:center; justify-content:center;}
+.match-ring svg{transform:rotate(-90deg);}
+.match-ring .val{position:absolute; font-family:var(--font-display); font-weight:700;}
+
+/* Layout helpers */
+.grid{display:grid; gap:20px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:900px){ .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;} }
+@media (max-width:900px){ .hide-mobile{display:none;} }
+@media (min-width:901px){ .show-mobile{display:none;} }
+
+.page-enter{animation:fadeUp .35s ease both;}
+@keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+.divider{height:1px; background:var(--border); border:none; margin:22px 0;}
+
+.empty-state{text-align:center; padding:60px 20px; color:var(--text-faint);}
+
+/* Assistant */
+.assistant-fab{
+  position:fixed; bottom:22px; right:22px; z-index:50; width:58px; height:58px; border-radius:50%;
+  background:linear-gradient(135deg,var(--indigo),var(--violet)); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:24px; box-shadow:0 10px 30px rgba(79,63,224,0.4); border:none;
+}
+.assistant-panel{
+  position:fixed; bottom:92px; right:22px; z-index:50; width:360px; max-width:calc(100vw - 32px);
+  height:480px; max-height:calc(100vh - 140px); background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,0.2); display:flex; flex-direction:column; overflow:hidden;
+}
+.assistant-header{padding:16px 18px; background:linear-gradient(135deg,var(--indigo),var(--violet)); color:#fff;}
+.assistant-msgs{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px;}
+.msg{max-width:85%; padding:10px 13px; border-radius:13px; font-size:13.8px; line-height:1.45; white-space:pre-wrap;}
+.msg.user{align-self:flex-end; background:var(--indigo); color:#fff; border-bottom-right-radius:4px;}
+.msg.bot{align-self:flex-start; background:var(--surface-2); color:var(--text); border-bottom-left-radius:4px;}
+.assistant-suggest{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px;}
+.assistant-input{display:flex; gap:8px; padding:12px; border-top:1px solid var(--border);}
+.assistant-input input{flex:1; border:1.5px solid var(--border); border-radius:10px; padding:9px 12px; background:var(--bg-alt); color:var(--text); font-size:13.5px; outline:none;}
+
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+
+.link-btn{background:none;border:none;color:var(--indigo);font-weight:600;font-size:inherit;padding:0;}
+.link-btn:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useRef } = React;
+
+/* ============================= DATA ============================= */
+
+const SKILLS_LIST = ["Python","Java","C++","HTML","CSS","JavaScript","React","SQL","Git","Node.js","Figma","AWS","Docker","TensorFlow","Linux"];
+const INTERESTS_LIST = ["AI/ML","Web Development","App Development","Cybersecurity","Data Science","Cloud Computing","Software Development"];
+const EXPERIENCE_LEVELS = ["Beginner","Intermediate","Advanced"];
+const WORK_MODES = ["Remote","On-site","Hybrid"];
+const YEARS = ["1st Year","2nd Year","3rd Year","4th Year","Final Year"];
+
+const EXP_RANK = { "Beginner": 1, "Intermediate": 2, "Advanced": 3 };
+
+const INTERNSHIPS = [
+  { id:"i1", title:"Frontend Engineering Intern", company:"Nimbusly", domain:"Web Development", location:"Bengaluru, India", remote:"Hybrid", duration:"3 months", stipend:"₹18,000/month", requiredSkills:["HTML","CSS","JavaScript","React"], preferredSkills:["Git","Figma"], eligibility:"2nd year and above, any branch", experienceLevel:"Beginner", deadline:"2026-10-15", description:"Build customer-facing UI for Nimbusly's scheduling product. You'll ship real components reviewed by senior engineers and pair on a weekly design-to-code sprint.", applyLink:"#" },
+  { id:"i2", title:"Full-Stack Development Intern", company:"Ledgerly", domain:"Web Development", location:"Remote", remote:"Remote", duration:"6 months", stipend:"₹25,000/month", requiredSkills:["JavaScript","React","Node.js","SQL"], preferredSkills:["Git","AWS"], eligibility:"3rd year and above", experienceLevel:"Intermediate", deadline:"2026-10-05", description:"Work across Ledgerly's invoicing platform — from API endpoints to the React dashboard used by thousands of small businesses.", applyLink:"#" },
+  { id:"i3", title:"UI Development Intern", company:"Cloverdesk", domain:"Web Development", location:"Pune, India", remote:"On-site", duration:"2 months", stipend:"₹12,000/month", requiredSkills:["HTML","CSS","JavaScript"], preferredSkills:["React","Figma"], eligibility:"1st year and above", experienceLevel:"Beginner", deadline:"2026-11-01", description:"Help redesign Cloverdesk's marketing site and onboarding flow, working closely with the design team.", applyLink:"#" },
+  { id:"i4", title:"Machine Learning Research Intern", company:"Veritas AI", domain:"AI/ML", location:"Hyderabad, India", remote:"Hybrid", duration:"6 months", stipend:"₹30,000/month", requiredSkills:["Python","TensorFlow","SQL"], preferredSkills:["Git","Linux"], eligibility:"Pre-final or final year, CS/related", experienceLevel:"Advanced", deadline:"2026-10-20", description:"Contribute to Veritas AI's document-understanding models — dataset curation, training experiments, and evaluation pipelines.", applyLink:"#" },
+  { id:"i5", title:"AI Applications Intern", company:"Cortexa Labs", domain:"AI/ML", location:"Remote", remote:"Remote", duration:"3 months", stipend:"₹20,000/month", requiredSkills:["Python","TensorFlow"], preferredSkills:["React","SQL"], eligibility:"2nd year and above", experienceLevel:"Intermediate", deadline:"2026-11-10", description:"Build small AI-powered features on top of Cortexa's existing models and help wire them into a web dashboard.", applyLink:"#" },
+  { id:"i6", title:"Computer Vision Intern", company:"Pixelforge", domain:"AI/ML", location:"Chennai, India", remote:"On-site", duration:"4 months", stipend:"₹22,000/month", requiredSkills:["Python","TensorFlow","C++"], preferredSkills:["Linux","Git"], eligibility:"3rd year and above, CS/EE", experienceLevel:"Advanced", deadline:"2026-10-25", description:"Work on real-time object detection for Pixelforge's retail analytics camera stack.", applyLink:"#" },
+  { id:"i7", title:"Data Science Intern", company:"Northlane Analytics", domain:"Data Science", location:"Remote", remote:"Remote", duration:"3 months", stipend:"₹17,000/month", requiredSkills:["Python","SQL"], preferredSkills:["TensorFlow","Git"], eligibility:"2nd year and above", experienceLevel:"Beginner", deadline:"2026-11-05", description:"Analyze customer usage data and build dashboards that inform Northlane's product roadmap.", applyLink:"#" },
+  { id:"i8", title:"Business Data Analyst Intern", company:"Marketrix", domain:"Data Science", location:"Mumbai, India", remote:"Hybrid", duration:"2 months", stipend:"₹15,000/month", requiredSkills:["SQL","Python"], preferredSkills:["Java"], eligibility:"1st year and above, any branch", experienceLevel:"Beginner", deadline:"2026-10-30", description:"Support the strategy team with market data pipelines, SQL reporting, and light Python automation.", applyLink:"#" },
+  { id:"i9", title:"Cybersecurity Analyst Intern", company:"Bastion Security", domain:"Cybersecurity", location:"Remote", remote:"Remote", duration:"3 months", stipend:"₹19,000/month", requiredSkills:["Linux","Python"], preferredSkills:["Git","SQL"], eligibility:"3rd year and above, CS/IT", experienceLevel:"Intermediate", deadline:"2026-11-12", description:"Assist Bastion's blue team with log analysis, vulnerability triage, and internal tooling in Python.", applyLink:"#" },
+  { id:"i10", title:"Application Security Intern", company:"Ironclad Labs", domain:"Cybersecurity", location:"Delhi, India", remote:"On-site", duration:"4 months", stipend:"₹21,000/month", requiredSkills:["Python","Linux","SQL"], preferredSkills:["JavaScript","Git"], eligibility:"Pre-final or final year", experienceLevel:"Advanced", deadline:"2026-10-18", description:"Perform guided security reviews of Ironclad's client web apps and help build automated scanning scripts.", applyLink:"#" },
+  { id:"i11", title:"Mobile App Development Intern", company:"Tapstream", domain:"App Development", location:"Remote", remote:"Remote", duration:"3 months", stipend:"₹16,000/month", requiredSkills:["Java","JavaScript"], preferredSkills:["Git","React"], eligibility:"2nd year and above", experienceLevel:"Beginner", deadline:"2026-11-08", description:"Ship new features for Tapstream's Android habit-tracking app alongside a two-person mobile team.", applyLink:"#" },
+  { id:"i12", title:"App Development Intern", company:"Housewell", domain:"App Development", location:"Bengaluru, India", remote:"Hybrid", duration:"6 months", stipend:"₹24,000/month", requiredSkills:["Java","SQL","Git"], preferredSkills:["React","AWS"], eligibility:"3rd year and above", experienceLevel:"Intermediate", deadline:"2026-10-22", description:"Build and maintain features across Housewell's property management app used by real estate agents.", applyLink:"#" },
+  { id:"i13", title:"Cloud Infrastructure Intern", company:"Skylattice", domain:"Cloud Computing", location:"Remote", remote:"Remote", duration:"4 months", stipend:"₹23,000/month", requiredSkills:["AWS","Linux","Docker"], preferredSkills:["Python","Git"], eligibility:"3rd year and above, CS/IT", experienceLevel:"Intermediate", deadline:"2026-11-02", description:"Help operate Skylattice's multi-region AWS setup and build internal deployment tooling.", applyLink:"#" },
+  { id:"i14", title:"DevOps Intern", company:"Corebase", domain:"Cloud Computing", location:"Pune, India", remote:"On-site", duration:"3 months", stipend:"₹18,000/month", requiredSkills:["Docker","Linux","Git"], preferredSkills:["AWS","Python"], eligibility:"2nd year and above", experienceLevel:"Beginner", deadline:"2026-10-28", description:"Support Corebase's CI/CD pipelines and containerized deployments for a fast-moving engineering team.", applyLink:"#" },
+  { id:"i15", title:"Software Engineering Intern", company:"Fernbridge Systems", domain:"Software Development", location:"Remote", remote:"Remote", duration:"6 months", stipend:"₹26,000/month", requiredSkills:["Java","C++","Git"], preferredSkills:["SQL","Linux"], eligibility:"3rd year and above", experienceLevel:"Advanced", deadline:"2026-10-12", description:"Work on Fernbridge's core backend services that power logistics routing for enterprise clients.", applyLink:"#" },
+  { id:"i16", title:"Backend Development Intern", company:"Quietwave", domain:"Software Development", location:"Hyderabad, India", remote:"Hybrid", duration:"3 months", stipend:"₹19,000/month", requiredSkills:["Python","SQL","Git"], preferredSkills:["AWS","Docker"], eligibility:"2nd year and above, CS/IT", experienceLevel:"Intermediate", deadline:"2026-11-15", description:"Build API services for Quietwave's audio-streaming analytics platform.", applyLink:"#" }
+];
+
+/* ============================= STORAGE HELPERS ============================= */
+
+function loadLS(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw === null || raw === undefined) return fallback;
+    return JSON.parse(raw);
+  }catch(e){ return fallback; }
+}
+function saveLS(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch(e){ return false; }
+}
+
+function emptyProfile(name, email){
+  return {
+    name: name || "", email: email || "", college:"", course:"", year:"",
+    skills:[], interests:[], experience:"Beginner", preferredDomain:"",
+    preferredLocation:"", workMode:"Remote"
+  };
+}
+
+const DEMO_EMAIL = "demo@smartintern.dev";
+const DEMO_PASSWORD = "demo1234";
+const DEMO_PROFILE_FIELDS = {
+  college:"State College of Engineering", course:"B.Tech Computer Science", year:"3rd Year",
+  skills:["Python","HTML","CSS","JavaScript","React","Git"],
+  interests:["Web Development","AI/ML"],
+  experience:"Intermediate", preferredDomain:"Web Development",
+  preferredLocation:"Remote", workMode:"Remote"
+};
+
+/* ============================= MATCH ENGINE ============================= */
+
+function calculateMatch(profile, internship){
+  const skills = profile.skills || [];
+  const required = internship.requiredSkills || [];
+  const preferred = internship.preferredSkills || [];
+
+  const matchingSkills = required.filter(s => skills.includes(s));
+  const missingSkills = required.filter(s => !skills.includes(s));
+  const matchingPreferred = preferred.filter(s => skills.includes(s));
+
+  const skillScore = required.length === 0 ? 1 : (matchingSkills.length / required.length);
+  const bonus = preferred.length === 0 ? 0 : Math.min(0.1, (matchingPreferred.length / preferred.length) * 0.1);
+  const skillComponent = Math.min(1, skillScore + bonus) * 50;
+
+  const interestMatch = (profile.interests || []).includes(internship.domain);
+  const domainComponent = (interestMatch ? 1 : (profile.preferredDomain === internship.domain ? 0.6 : 0)) * 25;
+
+  const profileRank = EXP_RANK[profile.experience] || 1;
+  const reqRank = EXP_RANK[internship.experienceLevel] || 1;
+  let expFactor;
+  if(profileRank >= reqRank) expFactor = 1;
+  else if(profileRank === reqRank - 1) expFactor = 0.55;
+  else expFactor = 0.15;
+  const experienceComponent = expFactor * 15;
+
+  let locFactor = 0;
+  if(profile.workMode && internship.remote && profile.workMode === internship.remote) locFactor += 0.6;
+  if(profile.preferredLocation && internship.location.toLowerCase().includes(profile.preferredLocation.toLowerCase())) locFactor += 0.4;
+  if(internship.remote === "Remote") locFactor = Math.max(locFactor, 0.7);
+  locFactor = Math.min(1, locFactor);
+  const locationComponent = locFactor * 10;
+
+  const rawScore = skillComponent + domainComponent + experienceComponent + locationComponent;
+  const score = Math.round(Math.max(0, Math.min(100, rawScore)));
+
+  let explanation = "";
+  if(matchingSkills.length > 0){
+    explanation += `You already have ${matchingSkills.length} of the ${required.length} required skill${required.length===1?"":"s"} (${matchingSkills.join(", ")}). `;
+  } else if(required.length > 0){
+    explanation += `You don't yet have any of the required skills for this role. `;
+  }
+  if(interestMatch){
+    explanation += `It also matches your stated interest in ${internship.domain}. `;
+  }
+  if(missingSkills.length > 0){
+    explanation += `Learning ${missingSkills.join(", ")} would strengthen your eligibility.`;
+  } else if(required.length > 0){
+    explanation += `You meet every required skill for this role.`;
+  }
+
+  let matchLabel = "Explore";
+  if(score >= 90) matchLabel = "Excellent Match";
+  else if(score >= 75) matchLabel = "Strong Match";
+  else if(score >= 60) matchLabel = "Good Match";
+
+  return { score, matchingSkills, missingSkills, matchingPreferred, explanation: explanation.trim(), matchLabel };
+}
+
+function rankInternships(profile){
+  return INTERNSHIPS.map(i => ({ internship: i, ...calculateMatch(profile, i) }))
+    .sort((a,b) => b.score - a.score);
+}
+
+/* ============================= SMALL UI PIECES ============================= */
+
+function Icon({ name, size=18 }){
+  const common = { width:size, height:size, viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:1.8, strokeLinecap:"round", strokeLinejoin:"round" };
+  const paths = {
+    dashboard: <><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></>,
+    list: <><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></>,
+    star: <path d="M12 2l2.9 6.9L22 9.7l-5.4 4.9L18 22l-6-3.6L6 22l1.4-7.4L2 9.7l7.1-.8L12 2z"/>,
+    target: <><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></>,
+    user: <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></>,
+    logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+    search: <><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
+    filter: <polygon points="4 4 20 4 14 12 14 19 10 19 10 12 4 4"/>,
+    check: <polyline points="20 6 9 17 4 12"/>,
+    x: <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+    map: <><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"/><line x1="9" y1="7" x2="9" y2="20"/><line x1="15" y1="7" x2="15" y2="20"/></>,
+    clock: <><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></>,
+    money: <><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></>,
+    arrow: <><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>,
+    bulb: <><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a6 6 0 0 0-4 10.4c.7.6 1 1.4 1 2.1V16h6v-1.5c0-.7.3-1.5 1-2.1A6 6 0 0 0 12 2z"/></>,
+    chat: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>,
+    warning: <><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>,
+    edit: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
+  };
+  return <svg {...common}>{paths[name] || null}</svg>;
+}
+
+function ScoreColor(score){
+  if(score >= 90) return "var(--green)";
+  if(score >= 75) return "var(--indigo)";
+  if(score >= 60) return "var(--blue)";
+  return "var(--amber)";
+}
+
+function MatchRing({ score, size=64 }){
+  const stroke = 6;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c - (score/100) * c;
+  const color = ScoreColor(score);
+  return (
+    <div className="match-ring" style={{width:size, height:size}}>
+      <svg width={size} height={size}>
+        <circle cx={size/2} cy={size/2} r={r} stroke="var(--surface-2)" strokeWidth={stroke} fill="none" />
+        <circle cx={size/2} cy={size/2} r={r} stroke={color} strokeWidth={stroke} fill="none"
+          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" />
+      </svg>
+      <div className="val" style={{fontSize:size*0.26, color}}>{score}</div>
+    </div>
+  );
+}
+
+function ProgressBar({ value, max=100, color }){
+  const pct = Math.max(0, Math.min(100, (value/max)*100));
+  return (
+    <div className="progress-track">
+      <div className="progress-fill" style={{ width: pct+"%", background: color || "var(--indigo)" }}></div>
+    </div>
+  );
+}
+
+function SkillBadge({ skill, kind="skill" }){
+  const cls = kind === "missing" ? "badge badge-missing" : "badge badge-skill";
+  return <span className={cls}>{kind === "missing" ? <Icon name="warning" size={12}/> : <Icon name="check" size={12}/>}{skill}</span>;
+}
+
+function MatchTag({ label, score }){
+  return <span className="badge" style={{ background: ScoreColor(score)+"1A", color: ScoreColor(score) }}>{label} · {score}%</span>;
+}
+
+/* ============================= NAVBAR ============================= */
+
+function Navbar({ view, go, session, logout }){
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const links = session ? [
+    { id:"dashboard", label:"Dashboard", icon:"dashboard" },
+    { id:"internships", label:"Internships", icon:"list" },
+    { id:"recommendations", label:"Recommendations", icon:"star" },
+    { id:"skillgap", label:"Skill Gap", icon:"target" },
+    { id:"profile", label:"Profile", icon:"user" },
+  ] : [];
+  return (
+    <div className="navbar">
+      <div className="container navbar-inner">
+        <button className="nav-link" style={{padding:0,background:"none"}} onClick={()=>go(session ? "dashboard" : "landing")}>
+          <div className="logo">
+            <div className="logo-mark">S</div>
+            SmartIntern
+          </div>
+        </button>
+        <div className="nav-links hide-mobile">
+          {links.map(l => (
+            <button key={l.id} className={"nav-link" + (view===l.id ? " active":"")} onClick={()=>go(l.id)}>{l.label}</button>
+          ))}
+          {session ? (
+            <button className="nav-link" onClick={logout}>Logout</button>
+          ) : (
+            <>
+              <button className="nav-link" onClick={()=>go("login")}>Log in</button>
+              <button className="btn btn-primary btn-sm" onClick={()=>go("register")}>Get Started</button>
+            </>
+          )}
+        </div>
+        <button className="btn btn-ghost show-mobile" onClick={()=>setMobileOpen(o=>!o)}><Icon name="list"/></button>
+      </div>
+      {mobileOpen && (
+        <div className="container show-mobile" style={{paddingBottom:14, display:"flex", flexDirection:"column", gap:4}}>
+          {links.map(l => (
+            <button key={l.id} className={"nav-link" + (view===l.id ? " active":"")} style={{textAlign:"left"}}
+              onClick={()=>{go(l.id); setMobileOpen(false);}}>{l.label}</button>
+          ))}
+          {session ? (
+            <button className="nav-link" style={{textAlign:"left"}} onClick={logout}>Logout</button>
+          ) : (
+            <>
+              <button className="nav-link" style={{textAlign:"left"}} onClick={()=>{go("login"); setMobileOpen(false);}}>Log in</button>
+              <button className="nav-link" style={{textAlign:"left"}} onClick={()=>{go("register"); setMobileOpen(false);}}>Get Started</button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================= LANDING PAGE ============================= */
+
+function LandingPage({ go, onDemo }){
+  const features = [
+    { icon:"target", title:"Personalized Recommendations", body:"Every listing is ranked against your own skills, interests and experience — not a generic feed." },
+    { icon:"star", title:"AI Match Score", body:"A transparent 0–100 score explains exactly why an internship fits, and by how much." },
+    { icon:"bulb", title:"Skill Gap Analysis", body:"See precisely which skills are holding back your match, and what to learn next." },
+  ];
+  return (
+    <div className="page-enter">
+      <section className="container" style={{paddingTop:72, paddingBottom:56, display:"grid", gridTemplateColumns:"1.1fr 0.9fr", gap:48, alignItems:"center"}}>
+        <div>
+          <h1 className="display" style={{fontSize:"clamp(34px,4.5vw,54px)", lineHeight:1.08, margin:"0 0 18px"}}>
+            Find the internship<br/>that's right for you.
+          </h1>
+          <p style={{fontSize:17, color:"var(--text-soft)", maxWidth:480, lineHeight:1.6, margin:"0 0 30px"}}>
+            SmartIntern reads your skills, interests and course, then scores every internship
+            on our board against your actual profile — so you spend time applying, not searching.
+          </p>
+          <div style={{display:"flex", gap:12, flexWrap:"wrap"}}>
+            <button className="btn btn-primary" onClick={()=>go("register")}>Get Started <Icon name="arrow" size={16}/></button>
+            <button className="btn btn-outline" onClick={()=>go("internships-preview")}>Explore Internships</button>
+          </div>
+          <button className="link-btn" style={{marginTop:14, fontSize:13.5}} onClick={onDemo}>Skip sign-up — try an instant demo account →</button>
+          <div style={{display:"flex", gap:26, marginTop:36}}>
+            <div><div className="display" style={{fontSize:26, fontWeight:700}}>16</div><div style={{fontSize:13, color:"var(--text-faint)"}}>live internships</div></div>
+            <div><div className="display" style={{fontSize:26, fontWeight:700}}>7</div><div style={{fontSize:13, color:"var(--text-faint)"}}>domains covered</div></div>
+            <div><div className="display" style={{fontSize:26, fontWeight:700}}>50%</div><div style={{fontSize:13, color:"var(--text-faint)"}}>weight on real skills</div></div>
+          </div>
+        </div>
+        <div className="card card-pad hide-mobile" style={{position:"relative"}}>
+          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
+            <div>
+              <div style={{fontWeight:700}}>Full-Stack Development Intern</div>
+              <div style={{fontSize:13, color:"var(--text-faint)"}}>Ledgerly · Remote</div>
+            </div>
+            <MatchRing score={82} size={58}/>
+          </div>
+          <hr className="divider" style={{margin:"14px 0"}}/>
+          <div style={{fontSize:13, fontWeight:600, color:"var(--text-soft)", marginBottom:8}}>Matching skills</div>
+          <div className="chip-select" style={{marginBottom:14}}>
+            <SkillBadge skill="JavaScript"/><SkillBadge skill="React"/><SkillBadge skill="SQL"/>
+          </div>
+          <div style={{fontSize:13, fontWeight:600, color:"var(--text-soft)", marginBottom:8}}>Skill gap</div>
+          <div className="chip-select">
+            <SkillBadge skill="Node.js" kind="missing"/>
+          </div>
+        </div>
+      </section>
+
+      <section className="container" style={{padding:"20px 24px 80px"}}>
+        <div className="grid grid-3">
+          {features.map(f => (
+            <div key={f.title} className="card card-pad">
+              <div style={{width:42,height:42,borderRadius:11, background:"var(--surface-2)", color:"var(--indigo)", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:14}}>
+                <Icon name={f.icon}/>
+              </div>
+              <div style={{fontWeight:700, fontSize:16.5, marginBottom:6}}>{f.title}</div>
+              <div style={{fontSize:14, color:"var(--text-soft)", lineHeight:1.55}}>{f.body}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ============================= AUTH PAGES ============================= */
+
+function AuthShell({ title, subtitle, children }){
+  return (
+    <div className="container page-enter" style={{maxWidth:440, paddingTop:56, paddingBottom:56}}>
+      <h2 className="display" style={{fontSize:26, marginBottom:6}}>{title}</h2>
+      <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:26}}>{subtitle}</p>
+      <div className="card card-pad">{children}</div>
+    </div>
+  );
+}
+
+function LoginPage({ go, onLogin, onDemo }){
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function submit(e){
+    e.preventDefault();
+    if(!email || !password){ setError("Enter both email and password."); return; }
+    const users = loadLS("smartintern_users", []);
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if(!user || user.password !== password){
+      setError("Invalid email or password.");
+      return;
+    }
+    setError("");
+    onLogin(user.email);
+  }
+
+  return (
+    <AuthShell title="Welcome back" subtitle="Log in to see your latest matches.">
+      <form onSubmit={submit}>
+        <div className="field">
+          <label>Email</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@college.edu" />
+        </div>
+        <div className="field">
+          <label>Password</label>
+          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" />
+        </div>
+        {error && <div className="field"><span className="error">{error}</span></div>}
+        <button className="btn btn-primary btn-block" type="submit">Log in</button>
+      </form>
+      <div style={{textAlign:"center", marginTop:16, fontSize:14, color:"var(--text-soft)"}}>
+        New to SmartIntern? <button className="link-btn" onClick={()=>go("register")}>Create an account</button>
+      </div>
+      <hr className="divider"/>
+      <button className="btn btn-outline btn-block" onClick={onDemo}>Skip sign-up — try instant demo</button>
+      <div style={{textAlign:"center", marginTop:10, fontSize:12.5, color:"var(--text-faint)"}}>Demo data only — nothing here is a real account.</div>
+    </AuthShell>
+  );
+}
+
+function RegisterPage({ go, onRegister, onDemo }){
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function submit(e){
+    e.preventDefault();
+    if(!name || !email || !password){ setError("All fields are required."); return; }
+    if(password.length < 4){ setError("Password should be at least 4 characters."); return; }
+    const users = loadLS("smartintern_users", []);
+    if(users.find(u => u.email.toLowerCase() === email.toLowerCase())){
+      setError("An account with this email already exists.");
+      return;
+    }
+    const newUser = { name, email, password };
+    users.push(newUser);
+    saveLS("smartintern_users", users);
+    const profiles = loadLS("smartintern_profiles", {});
+    profiles[email] = emptyProfile(name, email);
+    saveLS("smartintern_profiles", profiles);
+    setError("");
+    onRegister(email);
+  }
+
+  return (
+    <AuthShell title="Create your account" subtitle="Takes less than a minute — build your profile next.">
+      <form onSubmit={submit}>
+        <div className="field">
+          <label>Name</label>
+          <input value={name} onChange={e=>setName(e.target.value)} placeholder="Asha Rao" />
+        </div>
+        <div className="field">
+          <label>Email</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@college.edu" />
+        </div>
+        <div className="field">
+          <label>Password</label>
+          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" />
+        </div>
+        {error && <div className="field"><span className="error">{error}</span></div>}
+        <button className="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+      <div style={{textAlign:"center", marginTop:16, fontSize:14, color:"var(--text-soft)"}}>
+        Already have an account? <button className="link-btn" onClick={()=>go("login")}>Log in</button>
+      </div>
+      <hr className="divider"/>
+      <button className="btn btn-outline btn-block" onClick={onDemo}>Skip sign-up — try instant demo</button>
+      <div style={{textAlign:"center", marginTop:10, fontSize:12.5, color:"var(--text-faint)"}}>Loads a pre-filled demo profile so you can click straight through every page.</div>
+    </AuthShell>
+  );
+}
+
+/* ============================= PROFILE PAGE ============================= */
+
+function MultiChip({ options, selected, onToggle }){
+  return (
+    <div className="chip-select">
+      {options.map(opt => (
+        <button type="button" key={opt} className={"chip" + (selected.includes(opt) ? " active":"")}
+          onClick={()=>onToggle(opt)}>{opt}</button>
+      ))}
+    </div>
+  );
+}
+
+function ProfilePage({ profile, saveProfile, go, justRegistered }){
+  const [form, setForm] = useState(profile);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(()=>{ setForm(profile); }, [profile]);
+
+  function update(field, value){ setForm(f => ({ ...f, [field]: value })); setSaved(false); }
+  function toggleFrom(field, value){
+    setForm(f => {
+      const arr = f[field] || [];
+      const next = arr.includes(value) ? arr.filter(v=>v!==value) : [...arr, value];
+      return { ...f, [field]: next };
+    });
+    setSaved(false);
+  }
+
+  function submit(e){
+    e.preventDefault();
+    saveProfile(form);
+    setSaved(true);
+  }
+
+  const complete = form.college && form.course && form.year && form.skills.length>0 && form.interests.length>0;
+
+  return (
+    <div className="container page-enter" style={{maxWidth:760, paddingTop:40, paddingBottom:60}}>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:14, flexWrap:"wrap"}}>
+        <div>
+          <h2 className="display" style={{fontSize:26, marginBottom:4}}>Your profile</h2>
+          <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:24}}>
+            {justRegistered ? "Add a few details so we can start matching you to internships." : "Keep this current — your match scores update instantly when you save."}
+          </p>
+        </div>
+        <button type="button" className="btn btn-outline btn-sm" onClick={()=>{
+          const filled = { ...form, ...DEMO_PROFILE_FIELDS, name: form.name || "Demo Student", email: form.email };
+          setForm(filled);
+          saveProfile(filled);
+          setSaved(true);
+        }}>Fill with sample data</button>
+      </div>
+      {!complete && (
+        <div className="card card-pad" style={{marginBottom:20, background:"var(--surface-2)", border:"none"}}>
+          <div style={{display:"flex", gap:10, alignItems:"center", fontSize:14, fontWeight:600}}>
+            <Icon name="warning" size={16}/> Add your college, course, year, skills and interests to unlock accurate match scores.
+          </div>
+        </div>
+      )}
+      <form onSubmit={submit} className="card card-pad">
+        <div className="grid grid-2">
+          <div className="field"><label>Name</label><input value={form.name} onChange={e=>update("name", e.target.value)} /></div>
+          <div className="field"><label>Email</label><input value={form.email} disabled /></div>
+          <div className="field"><label>College</label><input value={form.college} onChange={e=>update("college", e.target.value)} placeholder="e.g. State College of Engineering" /></div>
+          <div className="field"><label>Course</label><input value={form.course} onChange={e=>update("course", e.target.value)} placeholder="e.g. B.Tech Computer Science" /></div>
+          <div className="field">
+            <label>Year</label>
+            <select value={form.year} onChange={e=>update("year", e.target.value)}>
+              <option value="">Select year</option>
+              {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Experience level</label>
+            <select value={form.experience} onChange={e=>update("experience", e.target.value)}>
+              {EXPERIENCE_LEVELS.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="field">
+          <label>Skills</label>
+          <MultiChip options={SKILLS_LIST} selected={form.skills} onToggle={v=>toggleFrom("skills", v)} />
+        </div>
+        <div className="field">
+          <label>Interests</label>
+          <MultiChip options={INTERESTS_LIST} selected={form.interests} onToggle={v=>toggleFrom("interests", v)} />
+        </div>
+
+        <div className="grid grid-2">
+          <div className="field">
+            <label>Preferred domain</label>
+            <select value={form.preferredDomain} onChange={e=>update("preferredDomain", e.target.value)}>
+              <option value="">No preference</option>
+              {INTERESTS_LIST.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Preferred location</label>
+            <input value={form.preferredLocation} onChange={e=>update("preferredLocation", e.target.value)} placeholder="e.g. Bengaluru, or Remote" />
+          </div>
+        </div>
+        <div className="field">
+          <label>Remote / On-site preference</label>
+          <MultiChip options={WORK_MODES} selected={[form.workMode]} onToggle={v=>update("workMode", v)} />
+        </div>
+
+        <div style={{display:"flex", gap:12, alignItems:"center", marginTop:6}}>
+          <button className="btn btn-primary" type="submit">Save profile</button>
+          {saved && <span style={{color:"var(--green)", fontSize:13.5, fontWeight:600, display:"flex", alignItems:"center", gap:6}}><Icon name="check" size={15}/> Saved</span>}
+          {justRegistered && complete && <button type="button" className="btn btn-outline" onClick={()=>go("dashboard")}>Go to dashboard</button>}
+        </div>
+      </form>
+    </div>
+  );
+}
+
+/* ============================= DASHBOARD ============================= */
+
+function Dashboard({ profile, go, openInternship }){
+  const hasProfile = profile.skills.length>0 || profile.interests.length>0;
+  const ranked = useMemo(()=>rankInternships(profile), [profile]);
+  const top = ranked.slice(0,3);
+  const suitable = ranked.filter(r => r.score >= 60);
+  const avgScore = ranked.length ? Math.round(ranked.reduce((s,r)=>s+r.score,0)/ranked.length) : 0;
+
+  const gapCounts = {};
+  ranked.forEach(r => r.missingSkills.forEach(s => { gapCounts[s] = (gapCounts[s]||0)+1; }));
+  const gapEntries = Object.entries(gapCounts).sort((a,b)=>b[1]-a[1]);
+  const topGap = gapEntries[0] ? gapEntries[0][0] : null;
+  const topSkill = profile.skills[0] || null;
+
+  return (
+    <div className="container page-enter" style={{paddingTop:36, paddingBottom:60}}>
+      <h2 className="display" style={{fontSize:26, marginBottom:2}}>Welcome back{profile.name ? ", "+profile.name.split(" ")[0] : ""}.</h2>
+      <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:24}}>Here's how you match against today's board.</p>
+
+      {!hasProfile && (
+        <div className="card card-pad" style={{marginBottom:22, display:"flex", justifyContent:"space-between", alignItems:"center", gap:14, flexWrap:"wrap", background:"var(--surface-2)", border:"none"}}>
+          <div style={{display:"flex", gap:12, alignItems:"center"}}>
+            <Icon name="warning"/>
+            <div style={{fontSize:14.5, fontWeight:600}}>Your profile is empty — add skills and interests to get real match scores.</div>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={()=>go("profile")}>Complete profile</button>
+        </div>
+      )}
+
+      <div className="grid grid-4" style={{marginBottom:26}}>
+        <div className="card card-pad">
+          <div style={{fontSize:12.5, color:"var(--text-faint)", fontWeight:600, marginBottom:8}}>AVERAGE MATCH SCORE</div>
+          <div className="display" style={{fontSize:30, fontWeight:700, color:ScoreColor(avgScore)}}>{avgScore}%</div>
+        </div>
+        <div className="card card-pad">
+          <div style={{fontSize:12.5, color:"var(--text-faint)", fontWeight:600, marginBottom:8}}>MATCHING INTERNSHIPS</div>
+          <div className="display" style={{fontSize:30, fontWeight:700}}>{suitable.length}</div>
+        </div>
+        <div className="card card-pad">
+          <div style={{fontSize:12.5, color:"var(--text-faint)", fontWeight:600, marginBottom:8}}>TOP SKILL</div>
+          <div className="display" style={{fontSize:19, fontWeight:700, paddingTop:6}}>{topSkill || "Add skills"}</div>
+        </div>
+        <div className="card card-pad">
+          <div style={{fontSize:12.5, color:"var(--text-faint)", fontWeight:600, marginBottom:8}}>MOST COMMON GAP</div>
+          <div className="display" style={{fontSize:19, fontWeight:700, paddingTop:6, color:"var(--red)"}}>{topGap || "None 🎉"}</div>
+        </div>
+      </div>
+
+      <div className="card card-pad" style={{marginBottom:26}}>
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
+          <div style={{fontWeight:700, fontSize:16}}>Your internship compatibility</div>
+        </div>
+        <div className="grid grid-2">
+          <div>
+            <div style={{fontSize:13, color:"var(--text-soft)", marginBottom:6}}>Overall profile strength</div>
+            <ProgressBar value={avgScore} color={ScoreColor(avgScore)} />
+            <div style={{fontSize:12.5, color:"var(--text-faint)", marginTop:6}}>{avgScore}% average across all live internships</div>
+          </div>
+          <div>
+            <div style={{fontSize:13, color:"var(--text-soft)", marginBottom:6}}>Skills covered vs. common gaps</div>
+            <ProgressBar value={profile.skills.length} max={Math.max(profile.skills.length + gapEntries.length, 1)} color="var(--indigo)" />
+            <div style={{fontSize:12.5, color:"var(--text-faint)", marginTop:6}}>{profile.skills.length} skills on your profile · {gapEntries.length} distinct gaps found</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}>
+        <div style={{fontWeight:700, fontSize:16}}>Top recommended internships</div>
+        <button className="link-btn" onClick={()=>go("recommendations")}>View all</button>
+      </div>
+      <div className="grid grid-3" style={{marginBottom:30}}>
+        {top.map(r => (
+          <div key={r.internship.id} className="card card-pad" style={{cursor:"pointer"}} onClick={()=>openInternship(r.internship.id)}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10}}>
+              <div>
+                <div style={{fontWeight:700, fontSize:15}}>{r.internship.title}</div>
+                <div style={{fontSize:13, color:"var(--text-faint)"}}>{r.internship.company}</div>
+              </div>
+              <MatchRing score={r.score} size={48}/>
+            </div>
+            <MatchTag label={r.matchLabel} score={r.score}/>
+          </div>
+        ))}
+      </div>
+
+      <div style={{display:"flex", gap:12, flexWrap:"wrap"}}>
+        <button className="btn btn-primary" onClick={()=>go("internships")}>Find Internships</button>
+        <button className="btn btn-outline" onClick={()=>go("profile")}>Edit Profile</button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================= INTERNSHIPS LIST ============================= */
+
+function SearchFilter({ filters, setFilters }){
+  const domains = ["All", ...INTERESTS_LIST];
+  const locations = ["All", ...Array.from(new Set(INTERNSHIPS.map(i=>i.location)))];
+  return (
+    <div className="card card-pad" style={{marginBottom:22}}>
+      <div className="field" style={{marginBottom:14}}>
+        <label>Search</label>
+        <input placeholder="Search by title or company…" value={filters.q}
+          onChange={e=>setFilters(f=>({...f, q:e.target.value}))} />
+      </div>
+      <div className="grid grid-4">
+        <div className="field">
+          <label>Domain</label>
+          <select value={filters.domain} onChange={e=>setFilters(f=>({...f, domain:e.target.value}))}>
+            {domains.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+        </div>
+        <div className="field">
+          <label>Location</label>
+          <select value={filters.location} onChange={e=>setFilters(f=>({...f, location:e.target.value}))}>
+            {locations.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+        </div>
+        <div className="field">
+          <label>Work mode</label>
+          <select value={filters.remote} onChange={e=>setFilters(f=>({...f, remote:e.target.value}))}>
+            <option value="All">All</option>
+            {WORK_MODES.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+        </div>
+        <div className="field">
+          <label>Stipend</label>
+          <select value={filters.paid} onChange={e=>setFilters(f=>({...f, paid:e.target.value}))}>
+            <option value="All">All</option>
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+          </select>
+        </div>
+      </div>
+      <div className="field" style={{marginBottom:0}}>
+        <label>Skills</label>
+        <MultiChip options={SKILLS_LIST} selected={filters.skills} onToggle={v=>{
+          setFilters(f => {
+            const has = f.skills.includes(v);
+            return { ...f, skills: has ? f.skills.filter(s=>s!==v) : [...f.skills, v] };
+          });
+        }} />
+      </div>
+    </div>
+  );
+}
+
+function InternshipCard({ internship, score, matchLabel, onOpen }){
+  const isPaid = !/unpaid/i.test(internship.stipend);
+  return (
+    <div className="card card-pad" style={{cursor:"pointer", display:"flex", flexDirection:"column", gap:12}} onClick={onOpen}>
+      <div style={{display:"flex", justifyContent:"space-between", gap:10}}>
+        <div>
+          <div style={{fontWeight:700, fontSize:15.5}}>{internship.title}</div>
+          <div style={{fontSize:13, color:"var(--text-faint)"}}>{internship.company}</div>
+        </div>
+        {typeof score === "number" && <MatchRing score={score} size={46}/>}
+      </div>
+      <div style={{display:"flex", flexWrap:"wrap", gap:8, fontSize:12.5, color:"var(--text-soft)"}}>
+        <span className="badge badge-domain">{internship.domain}</span>
+        <span style={{display:"flex", alignItems:"center", gap:4}}><Icon name="map" size={13}/>{internship.location}</span>
+        <span style={{display:"flex", alignItems:"center", gap:4}}><Icon name="clock" size={13}/>{internship.duration}</span>
+      </div>
+      <div style={{display:"flex", alignItems:"center", gap:4, fontSize:13, fontWeight:600, color: isPaid ? "var(--green)" : "var(--text-faint)"}}>
+        <Icon name="money" size={14}/>{internship.stipend}
+      </div>
+      <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
+        {internship.requiredSkills.slice(0,4).map(s => <span key={s} className="badge badge-skill">{s}</span>)}
+      </div>
+      {matchLabel && <MatchTag label={matchLabel} score={score}/>}
+      <button className="btn btn-outline btn-sm" style={{alignSelf:"flex-start"}} onClick={(e)=>{e.stopPropagation(); onOpen();}}>View details</button>
+    </div>
+  );
+}
+
+function InternshipsPage({ profile, openInternship, hasProfile }){
+  const [filters, setFilters] = useState({ q:"", domain:"All", location:"All", remote:"All", paid:"All", skills:[] });
+  const ranked = useMemo(()=>rankInternships(profile), [profile]);
+
+  const filtered = ranked.filter(({internship}) => {
+    if(filters.q && !(internship.title.toLowerCase().includes(filters.q.toLowerCase()) || internship.company.toLowerCase().includes(filters.q.toLowerCase()))) return false;
+    if(filters.domain !== "All" && internship.domain !== filters.domain) return false;
+    if(filters.location !== "All" && internship.location !== filters.location) return false;
+    if(filters.remote !== "All" && internship.remote !== filters.remote) return false;
+    if(filters.paid === "Paid" && /unpaid/i.test(internship.stipend)) return false;
+    if(filters.paid === "Unpaid" && !/unpaid/i.test(internship.stipend)) return false;
+    if(filters.skills.length > 0 && !filters.skills.every(s => internship.requiredSkills.includes(s) || internship.preferredSkills.includes(s))) return false;
+    return true;
+  });
+
+  return (
+    <div className="container page-enter" style={{paddingTop:36, paddingBottom:60}}>
+      <h2 className="display" style={{fontSize:26, marginBottom:4}}>Browse internships</h2>
+      <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:22}}>16 demo listings across 7 domains. All company data below is sample data for this demo.</p>
+      <SearchFilter filters={filters} setFilters={setFilters} />
+      {filtered.length === 0 ? (
+        <div className="empty-state card">
+          <Icon name="search" size={30}/>
+          <div style={{marginTop:10, fontWeight:600}}>No internships found</div>
+          <div style={{fontSize:13.5}}>Try widening your filters or clearing the search.</div>
+        </div>
+      ) : (
+        <div className="grid grid-3">
+          {filtered.map(({internship, score, matchLabel}) => (
+            <InternshipCard key={internship.id} internship={internship} score={hasProfile ? score : null} matchLabel={hasProfile ? matchLabel : null} onOpen={()=>openInternship(internship.id)} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================= INTERNSHIP DETAIL ============================= */
+
+function InternshipDetail({ internshipId, profile, back, hasProfile, go }){
+  const internship = INTERNSHIPS.find(i => i.id === internshipId);
+  if(!internship) return <div className="container" style={{paddingTop:40}}>Internship not found. <button className="link-btn" onClick={back}>Go back</button></div>;
+  const match = calculateMatch(profile, internship);
+
+  return (
+    <div className="container page-enter" style={{paddingTop:32, paddingBottom:60, maxWidth:920}}>
+      <button className="btn btn-ghost" style={{paddingLeft:0, marginBottom:10}} onClick={back}>← Back</button>
+      <div className="card card-pad">
+        <div style={{display:"flex", justifyContent:"space-between", gap:20, flexWrap:"wrap", marginBottom:6}}>
+          <div>
+            <h2 className="display" style={{fontSize:24, margin:"0 0 4px"}}>{internship.title}</h2>
+            <div style={{color:"var(--text-soft)", fontWeight:600}}>{internship.company}</div>
+          </div>
+          {hasProfile && (
+            <div style={{textAlign:"center"}}>
+              <MatchRing score={match.score} size={72}/>
+              <div style={{fontSize:12, marginTop:6}}><MatchTag label={match.matchLabel} score={match.score}/></div>
+            </div>
+          )}
+        </div>
+
+        <div style={{display:"flex", flexWrap:"wrap", gap:16, margin:"18px 0", fontSize:13.5, color:"var(--text-soft)"}}>
+          <span style={{display:"flex", alignItems:"center", gap:6}}><Icon name="map" size={15}/>{internship.location} · {internship.remote}</span>
+          <span style={{display:"flex", alignItems:"center", gap:6}}><Icon name="clock" size={15}/>{internship.duration}</span>
+          <span style={{display:"flex", alignItems:"center", gap:6}}><Icon name="money" size={15}/>{internship.stipend}</span>
+          <span style={{display:"flex", alignItems:"center", gap:6}}><Icon name="warning" size={15}/>Apply by {internship.deadline}</span>
+        </div>
+
+        <p style={{lineHeight:1.65, color:"var(--text)", fontSize:15}}>{internship.description}</p>
+        <div style={{fontSize:12.5, color:"var(--text-faint)", marginBottom:18}}>Eligibility: {internship.eligibility} · Experience level: {internship.experienceLevel}</div>
+
+        <hr className="divider"/>
+
+        <div className="grid grid-2">
+          <div>
+            <div style={{fontWeight:700, marginBottom:10}}>Required skills</div>
+            <div className="chip-select">{internship.requiredSkills.map(s => <SkillBadge key={s} skill={s} kind={profile.skills.includes(s) ? "skill":"missing"} />)}</div>
+          </div>
+          <div>
+            <div style={{fontWeight:700, marginBottom:10}}>Preferred skills</div>
+            <div className="chip-select">{internship.preferredSkills.map(s => <SkillBadge key={s} skill={s} kind={profile.skills.includes(s) ? "skill":"missing"} />)}</div>
+          </div>
+        </div>
+
+        {hasProfile && (
+          <>
+            <hr className="divider"/>
+            <div className="grid grid-2">
+              <div className="card card-pad" style={{background:"var(--surface-2)", border:"none"}}>
+                <div style={{fontWeight:700, marginBottom:8, display:"flex", alignItems:"center", gap:8}}><Icon name="bulb" size={16}/>Why this matches you</div>
+                <div style={{fontSize:13.8, lineHeight:1.6, color:"var(--text-soft)"}}>{match.explanation}</div>
+              </div>
+              <div className="card card-pad" style={{background:"var(--surface-2)", border:"none"}}>
+                <div style={{fontWeight:700, marginBottom:8, display:"flex", alignItems:"center", gap:8}}><Icon name="warning" size={16}/>Skills you're missing</div>
+                {match.missingSkills.length === 0 ? (
+                  <div style={{fontSize:13.8, color:"var(--green)", fontWeight:600}}>None — you meet every required skill.</div>
+                ) : (
+                  <div className="chip-select">{match.missingSkills.map(s => <SkillBadge key={s} skill={s} kind="missing"/>)}</div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div style={{marginTop:22, display:"flex", gap:12}}>
+          <a className="btn btn-primary" href={internship.applyLink} onClick={e=>e.preventDefault()}>Apply Now</a>
+          {!hasProfile && <button className="btn btn-outline" onClick={()=>go("profile")}>Complete profile to see match score</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================= RECOMMENDATIONS ============================= */
+
+function RecommendationCard({ r, onOpen }){
+  return (
+    <div className="card card-pad">
+      <div style={{display:"flex", justifyContent:"space-between", gap:12}}>
+        <div>
+          <div style={{fontWeight:700, fontSize:15.5}}>{r.internship.title}</div>
+          <div style={{fontSize:13, color:"var(--text-faint)"}}>{r.internship.company} · {r.internship.domain}</div>
+          <div style={{fontSize:12.5, color:"var(--text-soft)", marginTop:4, display:"flex", alignItems:"center", gap:5}}><Icon name="map" size={12}/>{r.internship.location}</div>
+        </div>
+        <MatchRing score={r.score} size={54}/>
+      </div>
+      <div style={{margin:"12px 0"}}><MatchTag label={r.matchLabel} score={r.score}/></div>
+      <div style={{display:"flex", flexWrap:"wrap", gap:6, marginBottom:8}}>
+        {r.matchingSkills.map(s => <SkillBadge key={s} skill={s}/>)}
+      </div>
+      <div style={{display:"flex", flexWrap:"wrap", gap:6, marginBottom:14}}>
+        {r.missingSkills.map(s => <SkillBadge key={s} skill={s} kind="missing"/>)}
+      </div>
+      <button className="btn btn-outline btn-sm" onClick={onOpen}>View Details</button>
+    </div>
+  );
+}
+
+function RecommendationsPage({ profile, openInternship, hasProfile, go }){
+  const ranked = useMemo(()=>rankInternships(profile), [profile]);
+  const top5 = ranked.slice(0,5);
+  return (
+    <div className="container page-enter" style={{paddingTop:36, paddingBottom:60}}>
+      <h2 className="display" style={{fontSize:26, marginBottom:4}}>Recommended for you</h2>
+      <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:22}}>
+        Ranked by match score — 50% skills, 25% interest/domain, 15% experience, 10% location.
+      </p>
+      {!hasProfile ? (
+        <div className="empty-state card">
+          <Icon name="user" size={30}/>
+          <div style={{marginTop:10, fontWeight:600}}>Complete your profile to see recommendations</div>
+          <button className="btn btn-primary btn-sm" style={{marginTop:14}} onClick={()=>go("profile")}>Build my profile</button>
+        </div>
+      ) : (
+        <div className="grid grid-3">
+          {top5.map(r => <RecommendationCard key={r.internship.id} r={r} onOpen={()=>openInternship(r.internship.id)} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================= SKILL GAP ANALYZER ============================= */
+
+const SKILL_META = {
+  "Python": { why:"Used across AI/ML, data science and backend roles — the single most requested skill on this board.", goal:"Complete a beginner Python course and build 2 small scripts.", difficulty:"Beginner" },
+  "JavaScript": { why:"The core language for almost every web internship listed here.", goal:"Learn JS fundamentals, then build one interactive page.", difficulty:"Beginner" },
+  "React": { why:"The most common frontend framework requested by web development roles.", goal:"Build a small multi-page app with React.", difficulty:"Intermediate" },
+  "SQL": { why:"Needed to query and reason about data in almost every technical internship.", goal:"Practice writing SELECT/JOIN queries on a sample database.", difficulty:"Beginner" },
+  "TensorFlow": { why:"The standard framework for the ML/AI internships on this board.", goal:"Train one small model end-to-end on a public dataset.", difficulty:"Advanced" },
+  "Git": { why:"Every team here expects comfort with version control.", goal:"Practice branching, committing and opening a pull request.", difficulty:"Beginner" },
+  "AWS": { why:"Cloud internships expect basic familiarity with core AWS services.", goal:"Deploy one small project using EC2 or S3.", difficulty:"Intermediate" },
+  "Docker": { why:"Used to package and ship applications consistently across cloud roles.", goal:"Containerize one of your own projects.", difficulty:"Intermediate" },
+  "Linux": { why:"The default environment for cloud, security and backend internships.", goal:"Get comfortable with the terminal and basic shell scripting.", difficulty:"Beginner" },
+  "Java": { why:"Widely used for backend and Android app development roles here.", goal:"Build a small console or Android app in Java.", difficulty:"Beginner" },
+  "C++": { why:"Expected for performance-sensitive software and ML roles.", goal:"Solve a set of data-structure problems in C++.", difficulty:"Intermediate" },
+  "HTML": { why:"The foundation of every web development listing.", goal:"Build and structure a full static page from scratch.", difficulty:"Beginner" },
+  "CSS": { why:"Needed alongside HTML for any frontend-facing role.", goal:"Recreate a real website's layout using CSS.", difficulty:"Beginner" },
+  "Node.js": { why:"Powers the backend of most full-stack listings here.", goal:"Build a small REST API with Node.js.", difficulty:"Intermediate" },
+  "Figma": { why:"Useful for internships that involve UI collaboration with designers.", goal:"Recreate one screen of an app in Figma.", difficulty:"Beginner" },
+};
+
+function SkillGapPage({ profile, go, hasProfile }){
+  const ranked = useMemo(()=>rankInternships(profile), [profile]);
+  const gapCounts = {};
+  ranked.forEach(r => r.missingSkills.forEach(s => { gapCounts[s] = (gapCounts[s]||0)+1; }));
+  const gaps = Object.entries(gapCounts).sort((a,b)=>b[1]-a[1]);
+
+  return (
+    <div className="container page-enter" style={{paddingTop:36, paddingBottom:60}}>
+      <h2 className="display" style={{fontSize:26, marginBottom:4}}>Your skill gaps</h2>
+      <p style={{color:"var(--text-soft)", fontSize:14.5, marginBottom:22}}>Skills most frequently missing across internships that otherwise fit you.</p>
+
+      {!hasProfile ? (
+        <div className="empty-state card">
+          <Icon name="target" size={30}/>
+          <div style={{marginTop:10, fontWeight:600}}>Add your skills first</div>
+          <button className="btn btn-primary btn-sm" style={{marginTop:14}} onClick={()=>go("profile")}>Complete profile</button>
+        </div>
+      ) : gaps.length === 0 ? (
+        <div className="empty-state card">
+          <Icon name="check" size={30}/>
+          <div style={{marginTop:10, fontWeight:600}}>No major skill gaps found — nice work.</div>
+        </div>
+      ) : (
+        <div className="grid grid-2">
+          {gaps.slice(0,8).map(([skill, count]) => {
+            const meta = SKILL_META[skill] || { why:"Appears as a requirement across several internships.", goal:"Add a small project using this skill to your portfolio.", difficulty:"Beginner" };
+            return (
+              <div key={skill} className="card card-pad">
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10}}>
+                  <div style={{fontWeight:700, fontSize:16}}>{skill}</div>
+                  <span className="badge" style={{background:"var(--surface-2)", color:"var(--text-soft)"}}>{meta.difficulty}</span>
+                </div>
+                <div style={{fontSize:13, color:"var(--text-faint)", marginBottom:10}}>Missing from {count} internship{count===1?"":"s"} you'd otherwise match well</div>
+                <div style={{fontSize:13.5, marginBottom:8}}><strong>Why it matters: </strong>{meta.why}</div>
+                <div style={{fontSize:13.5}}><strong>Suggested goal: </strong>{meta.goal}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <button className="btn btn-primary" style={{marginTop:22}} onClick={()=>go("profile")}>Improve My Profile</button>
+    </div>
+  );
+}
+
+/* ============================= AI ASSISTANT ============================= */
+
+function buildAssistantReply(question, profile, ranked, hasProfile){
+  const q = question.toLowerCase();
+
+  if(!hasProfile){
+    return "Your profile is still empty, so I can't personalize an answer yet. Head to Profile and add your skills and interests — then ask me again.";
+  }
+
+  if(/best|suited|which internship/.test(q)){
+    const top = ranked[0];
+    if(!top) return "I couldn't find a strong match yet — try adding more skills to your profile.";
+    return `Based on your profile, ${top.internship.title} at ${top.internship.company} is your best match at ${top.score}% (${top.matchLabel}). ${top.explanation}`;
+  }
+
+  if(/skill|learn/.test(q) && /ai|ml|machine learning/.test(q)){
+    return "For AI/ML internships on this board, Python and TensorFlow show up the most, with SQL and Git also commonly requested. Start with Python fundamentals, then move to a small TensorFlow project.";
+  }
+
+  if(/what skill|learn|improve|upskill/.test(q)){
+    const counts = {};
+    ranked.slice(0,6).forEach(r => r.missingSkills.forEach(s => counts[s]=(counts[s]||0)+1));
+    const top3 = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3).map(e=>e[0]);
+    if(top3.length===0) return "You're not missing any skills across your top matches right now — great position to be in.";
+    return `Across your closest matches, the most valuable skills to add are ${top3.join(", ")}. Adding even one of these would raise several of your match scores.`;
+  }
+
+  if(/why.*score|explain.*match|how.*match.*calculat/.test(q)){
+    const top = ranked[0];
+    const detail = top ? ` For example, your top match, ${top.internship.title}, scored ${top.score}% because: ${top.explanation}` : "";
+    return `Match scores combine four things: skills overlap (50%), interest/domain fit (25%), experience level vs. eligibility (15%), and location/work-mode preference (10%).${detail}`;
+  }
+
+  if(/add.*profile|profile.*add|missing.*profile/.test(q)){
+    const missing = [];
+    if(!profile.college) missing.push("college");
+    if(!profile.course) missing.push("course");
+    if(!profile.year) missing.push("year");
+    if(profile.skills.length < 3) missing.push("a few more skills");
+    if(profile.interests.length === 0) missing.push("at least one interest");
+    if(missing.length === 0) return "Your profile looks solid. You could still raise your scores by adding any newly learned skills as you pick them up.";
+    return `Adding ${missing.join(", ")} to your profile would improve how accurately I can match you.`;
+  }
+
+  if(/how many|count/.test(q) && /internship/.test(q)){
+    const suitable = ranked.filter(r=>r.score>=60).length;
+    return `You have ${suitable} internship${suitable===1?"":"s"} scoring 60% or higher out of ${ranked.length} total listings.`;
+  }
+
+  return "I can help with things like: \"Which internship is best suited to my skills?\", \"What skills should I learn for AI internships?\", \"Why did I get this match score?\", or \"What should I add to my profile?\" Try one of those, or rephrase your question.";
+}
+
+function AIAssistant({ profile, hasProfile }){
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role:"bot", text:"Hi, I'm SmartIntern AI. Ask me about your matches, skill gaps, or what to add to your profile." }
+  ]);
+  const [input, setInput] = useState("");
+  const ranked = useMemo(()=>rankInternships(profile), [profile]);
+  const scrollRef = useRef(null);
+
+  useEffect(()=>{
+    if(scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, open]);
+
+  function send(text){
+    const t = (text !== undefined ? text : input).trim();
+    if(!t) return;
+    const reply = buildAssistantReply(t, profile, ranked, hasProfile);
+    setMessages(m => [...m, { role:"user", text:t }, { role:"bot", text:reply }]);
+    setInput("");
+  }
+
+  const suggestions = ["Which internship is best suited to my skills?", "What skills should I learn?", "Why did I get this match score?"];
+
+  return (
+    <>
+      <button className="assistant-fab" onClick={()=>setOpen(o=>!o)} title="SmartIntern AI"><Icon name="chat" size={24}/></button>
+      {open && (
+        <div className="assistant-panel">
+          <div className="assistant-header">
+            <div style={{fontWeight:700, fontSize:15}}>SmartIntern AI</div>
+            <div style={{fontSize:12, opacity:0.85}}>Answers use your profile and live internship data</div>
+          </div>
+          <div className="assistant-msgs" ref={scrollRef}>
+            {messages.map((m,idx) => <div key={idx} className={"msg " + m.role}>{m.text}</div>)}
+          </div>
+          <div className="assistant-suggest">
+            {suggestions.map(s => <button key={s} className="chip" style={{fontSize:12}} onClick={()=>send(s)}>{s}</button>)}
+          </div>
+          <div className="assistant-input">
+            <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask a question…"
+              onKeyDown={e=>{ if(e.key==="Enter") send(); }} />
+            <button className="btn btn-primary btn-sm" onClick={()=>send()}>Send</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ============================= APP ROOT ============================= */
+
+function App(){
+  const [session, setSession] = useState(()=>loadLS("smartintern_session", null));
+  const [view, setView] = useState(()=> session ? "dashboard" : "landing");
+  const [internshipId, setInternshipId] = useState(null);
+  const [prevView, setPrevView] = useState("internships");
+  const [justRegistered, setJustRegistered] = useState(false);
+
+  const [profiles, setProfiles] = useState(()=>loadLS("smartintern_profiles", {}));
+  const profile = session ? (profiles[session] || emptyProfile("", session)) : emptyProfile();
+  const hasProfile = !!(profile.skills.length>0 && profile.interests.length>0);
+
+  function go(v){ setView(v); window.scrollTo(0,0); }
+
+  function openInternship(id){ setPrevView(view === "internships-preview" ? "internships-preview" : view); setInternshipId(id); setView("detail"); }
+  function backFromDetail(){ setView(prevView); }
+
+  function handleLogin(email){
+    saveLS("smartintern_session", email);
+    setSession(email);
+    setJustRegistered(false);
+    go("dashboard");
+  }
+  function handleRegister(email){
+    saveLS("smartintern_session", email);
+    setSession(email);
+    setProfiles(loadLS("smartintern_profiles", {}));
+    setJustRegistered(true);
+    go("profile");
+  }
+  function handleLogout(){
+    localStorage.removeItem("smartintern_session");
+    setSession(null);
+    go("landing");
+  }
+  function startDemo(){
+    const users = loadLS("smartintern_users", []);
+    if(!users.find(u => u.email.toLowerCase() === DEMO_EMAIL)){
+      users.push({ name:"Demo Student", email: DEMO_EMAIL, password: DEMO_PASSWORD });
+      saveLS("smartintern_users", users);
+    }
+    const all = loadLS("smartintern_profiles", {});
+    if(!all[DEMO_EMAIL]){
+      all[DEMO_EMAIL] = { ...emptyProfile("Demo Student", DEMO_EMAIL), ...DEMO_PROFILE_FIELDS };
+      saveLS("smartintern_profiles", all);
+    }
+    setProfiles(all);
+    saveLS("smartintern_session", DEMO_EMAIL);
+    setSession(DEMO_EMAIL);
+    setJustRegistered(false);
+    go("dashboard");
+  }
+  function saveProfile(newProfile){
+    const all = loadLS("smartintern_profiles", {});
+    all[session] = newProfile;
+    saveLS("smartintern_profiles", all);
+    setProfiles(all);
+  }
+
+  const guardedGo = (v) => {
+    const protectedViews = ["dashboard","internships","recommendations","skillgap","profile"];
+    if(protectedViews.includes(v) && !session){ go("login"); return; }
+    go(v);
+  };
+
+  let content;
+  if(view === "landing") content = <LandingPage go={guardedGo} onDemo={startDemo} />;
+  else if(view === "internships-preview") content = <InternshipsPage profile={emptyProfile()} openInternship={(id)=>{ setPrevView("internships-preview"); setInternshipId(id); setView("detail"); }} hasProfile={false} />;
+  else if(view === "login") content = <LoginPage go={go} onLogin={handleLogin} onDemo={startDemo} />;
+  else if(view === "register") content = <RegisterPage go={go} onRegister={handleRegister} onDemo={startDemo} />;
+  else if(!session) content = <LoginPage go={go} onLogin={handleLogin} onDemo={startDemo} />;
+  else if(view === "profile") content = <ProfilePage profile={profile} saveProfile={saveProfile} go={go} justRegistered={justRegistered} />;
+  else if(view === "dashboard") content = <Dashboard profile={profile} go={guardedGo} openInternship={openInternship} />;
+  else if(view === "internships") content = <InternshipsPage profile={profile} openInternship={openInternship} hasProfile={hasProfile} />;
+  else if(view === "recommendations") content = <RecommendationsPage profile={profile} openInternship={openInternship} hasProfile={hasProfile} go={guardedGo} />;
+  else if(view === "skillgap") content = <SkillGapPage profile={profile} go={guardedGo} hasProfile={hasProfile} />;
+  else if(view === "detail") content = <InternshipDetail internshipId={internshipId} profile={profile} back={backFromDetail} hasProfile={session ? hasProfile : false} go={guardedGo} />;
+  else content = <LandingPage go={guardedGo} />;
+
+  return (
+    <div>
+      <Navbar view={view} go={guardedGo} session={session} logout={handleLogout} />
+      {content}
+      {session && <AIAssistant profile={profile} hasProfile={hasProfile} />}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
